@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int main() {
+int totalStars = 5;
+int line = 1;
+
+while( line < totalStars) {
+int starCount = 1;
+while (starCount <= line) {
+printf("* ");
+starCount++;
+}
+
+printf("\n");
+line++;
+}
+	return 0;
+}
