@@ -1,0 +1,143 @@
+float monX, monY;
+int monSize = 100;
+boolean dragging = false;
+
+int rescuedCount = 0;
+int numPeople = 5;
+boolean success = false;
+
+PVector[] buildings;
+boolean[] rescued;
+boolean[] carried;
+PVector[] people;
+
+float buildingSpeed = 2;
+
+PFont font;
+
+void setup() {
+  size(800, 600);
+  monX = width / 2;
+  monY = 150;
+
+  buildings = new PVector[numPeople];
+  people = new PVector[numPeople];
+  rescued = new boolean[numPeople];
+  carried = new boolean[numPeople];
+
+  for (int i = 0; i < numPeople; i++) {
+    float x = random(0, width);
+    buildings[i] = new PVector(x, height - 100);
+    people[i] = new PVector(x, height - 110);
+    rescued[i] = false;
+    carried[i] = false;
+  }
+
+  textAlign(CENTER, CENTER);
+  font = createFont("Arial", 20);
+  textFont(font);
+}
+
+void draw() {
+  background(220);
+
+  for (int i = 0; i < numPeople; i++) {
+    if (!rescued[i]) {
+     
+      buildings[i].x += buildingSpeed;
+      people[i].x += buildingSpeed;
+
+      if (buildings[i].x > width + 50) {
+        buildings[i].x = -50;
+        people[i].x = -50;
+      }
+
+   
+      fill(150);
+      rect(buildings[i].x - 25, buildings[i].y, 50, 100);
+    }
+
+ 
+    float personX = people[i].x;
+    float personY = people[i].y;
+    float personRadius = 10;
+
+    if (dragging && !rescued[i]) {
+      float d = dist(monX, monY, personX, personY);
+      if (d < personRadius) {
+        rescued[i] = true;
+        carried[i] = true;
+        rescuedCount++;
+        if (rescuedCount >= numPeople) {
+          success = true;
+        }
+      }
+    }
+
+   
+    if (!rescued[i]) {
+      fill(255, 255, 0);
+      ellipse(personX, personY, personRadius * 2, personRadius * 2);
+    }
+  }
+
+ 
+  if (dragging) {
+    monX = mouseX;
+    monY = mouseY;
+  }
+
+ 
+  drawAlien(monX, monY);
+
+ 
+  int carriedCount = 0;
+  for (int i = 0; i < numPeople; i++) {
+    if (carried[i]) {
+      fill(255, 255, 0);
+      float offsetY = monY - monSize / 2 - 10 - carriedCount * 22;
+      ellipse(monX, offsetY, 20, 20);
+      carriedCount++;
+    }
+  }
+
+ 
+  if (success) {
+    fill(0);
+    textSize(32);
+    text("Success! All people rescued!", width / 2, height / 2);
+    noLoop();
+  }
+
+  // UI
+  fill(0);
+  textSize(18);
+  text("Click and drag the alien to collect yellow people!", width / 2, 30);
+  text("Rescued: " + rescuedCount + " / " + numPeople, 120, 30);
+}
+
+void drawAlien(float x, float y) {
+  fill(100, 230, 100);
+  ellipse(x, y, monSize, monSize);
+
+  fill(255);
+  ellipse(x, y - 20, monSize / 2, monSize / 2);
+  fill(0);
+  ellipse(x, y - 20, monSize / 4, monSize / 4);
+
+  noFill();
+  stroke(0);
+  arc(x, y + 10, monSize / 2, monSize / 4, 0, PI);
+  noStroke();
+
+  rect(x - 20, y + monSize / 2 - 10, 10, 20);
+  rect(x + 10, y + monSize / 2 - 10, 10, 20);
+}
+
+void mousePressed() {
+  dragging = true;
+}
+
+void mouseReleased() {
+  dragging = false;
+}
