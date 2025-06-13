@@ -10,7 +10,7 @@ int *ptr = scores;
 for (int i = 0; i < STUDENTS; i ++) {
 sum += *(ptr + i);
 if (*(ptr + i) > max) max = *(ptr + i);
-if (*(ptr + i) < min) max = *(ptr + i);
+if (*(ptr + i) < min) min = *(ptr + i);
 }
 
 printf("AVERAGE: %.2f\n", (float)sum / STUDENTS);
